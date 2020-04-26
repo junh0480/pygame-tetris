@@ -1,6 +1,13 @@
 
-from collections import defaultdict
+import pygame
+from collections import defaultdict # key 값이 없을 경우 미리 지정해 놓은 초기값을 반환하는 딕셔너리
 from random import Random
+
+pygame.mixer.init()
+sound_line = pygame.mixer.Sound('sound/line.wav')
+sound_fall = pygame.mixer.Sound('sound/fall.wav')
+sound_line.set_volume(0.1)
+sound_fall.set_volume(0.7)
 
 # Some interfaces
 class Color:
@@ -9,9 +16,10 @@ class Color:
 	BLUE = "blue"
 	GREEN = "green"
 	YELLOW = "yellow"
-	MAGENTA = "magenta"
-	CYAN = "cyan"
+	MAGENTA = "magenta" # 분홍색과 비슷한 색
+	CYAN = "cyan" # 청록색
 	ORANGE = "orange"
+	GRAY = "gray"
 
 	@staticmethod
 	def colors():
@@ -158,6 +166,8 @@ class Board:
 	def clear_tile(self, x, y):
 		self.tiles[(x,y)] = Color.CLEAR
 
+		
+
 		# Move all the tiles above this row down one space
 		for y_tile in range(y, self.columns[x] - 1, -1):
 			self.tiles[(x, y_tile)] = self.tiles[(x, y_tile - 1)]
@@ -170,6 +180,7 @@ class Board:
 	def clear_row(self, row):
 		for col in range(len(self.columns)):
 			self.clear_tile(col, row)
+			sound_line.play()
 
 	def row_full(self, row):
 		for col in range(len(self.columns)):
@@ -200,6 +211,7 @@ class Board:
 			# We want to give a short leeway for the player to move the piece, once it's hit bottom
 			if self.finalize_ready:
 				self.finalize_piece()
+				sound_fall.play()
 				if self.autogen:
 					self.generate_piece()
 			else:
@@ -216,6 +228,7 @@ class Board:
 			self.piece.move(0, 1)
 		self.finalize_piece()
 		self.generate_piece()
+		sound_fall.play()
 
 	def move_piece(self, x_move, y_move):
 		"""Move a piece some number of spaces in any direction"""

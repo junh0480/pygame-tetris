@@ -7,25 +7,29 @@ from pygame.locals import *
 from engine import TextView, ViewBase, Board, Piece, Color
 
 _print_dim = False
+pygame.mixer.init()
+pygame.mixer.music.load('sound/Tetris_theme.ogg')
+pygame.mixer.music.play(-1,0)
 
 class PygameView(ViewBase):
     """Renders a board in pygame."""
 
     COLOR_MAP = {
-        Color.CLEAR : pygame.Color(255, 255, 255),
+        Color.CLEAR : pygame.Color(0, 0, 0),
         Color.RED : pygame.Color(255, 0, 0),
         Color.BLUE : pygame.Color(0, 255, 0),
         Color.GREEN : pygame.Color(0, 0, 255),
         Color.YELLOW : pygame.Color(255, 255, 0),
         Color.MAGENTA : pygame.Color(255, 0, 255),
         Color.CYAN : pygame.Color(0, 255, 255),
-        Color.ORANGE : pygame.Color(255, 140, 0)
+        Color.ORANGE : pygame.Color(255, 140, 0),
+        Color.GRAY : pygame.Color(189,189,189)
     }
         
     BOARD_BORDER_SIZE = 5
     SCORE_PADDING = 5
     BORDER_SIZE = 4
-    BORDER_FADE = pygame.Color(50, 50, 50)
+    BORDER_FADE = pygame.Color(0, 0, 0) # 배경 색임
 
     def __init__(self, surf, fonts):
         ViewBase.__init__(self)
@@ -36,7 +40,7 @@ class PygameView(ViewBase):
         self.padding = (0, 0)
         self.go_font = fonts["game_over"]
         self.sc_font = fonts["score"]
-        self.font_color = pygame.Color(200, 0, 0)
+        self.font_color = pygame.Color(189, 189, 189)
         self.score = None
         self.level = None
 
@@ -112,8 +116,8 @@ class PygameView(ViewBase):
 
 
     def draw_board(self):
-        bg_color = self.COLOR_MAP[Color.CLEAR]
-        self.surf.fill(bg_color - self.BORDER_FADE)
+        bg_color = self.COLOR_MAP[Color.GRAY]
+        self.surf.fill(self.BORDER_FADE)
 
         X_START = self.BOARD_BORDER_SIZE + (self.padding[1] // 2)
         Y_START = self.BOARD_BORDER_SIZE + (self.padding[0] // 2)
@@ -135,7 +139,7 @@ class PygameView(ViewBase):
 
         pg_color = self.COLOR_MAP[color]
         bd_size = self.BORDER_SIZE
-        bd_color = pg_color - self.BORDER_FADE
+        bd_color = self.BORDER_FADE
 
         outer_rect = (y, x, self.box_size, self.box_size)
         inner_rect = (y + bd_size, x + bd_size, 
@@ -182,13 +186,13 @@ class Tetris:
     def init(self):
         pygame.init()
         pygame.font.init()
-        self.surf = pygame.display.set_mode((600, 600))
+        self.surf = pygame.display.set_mode((600, 600)) # 디스플레이 크기 설정
         self.font = None
 
         if pygame.font.get_init():
             self.fonts = {}
-            self.fonts["game_over"] = pygame.font.SysFont("ni7seg", 60)
-            self.fonts["score"] = pygame.font.SysFont("ni7seg", 18)
+            self.fonts["game_over"] = pygame.font.SysFont(None, 72)
+            self.fonts["score"] = pygame.font.SysFont(None, 36)
 
         self.view = self.view_type(self.surf, self.fonts)
 
@@ -238,7 +242,7 @@ class Tetris:
         self.view.show()
 
         if self.game_over:
-            self.view.show_game_over()
+            self.view.show_game_over() # 게임오버 함수가 있는 듯
 
         pygame.display.update()
 
@@ -263,6 +267,7 @@ class Tetris:
             if self.board.game_over and not self.game_over:
                 self.game_over = True
                 pygame.time.set_timer(self.DROP_EVENT, 0)
+                
 
             self.render_frame()
             self.clock.tick(self.max_fps)
