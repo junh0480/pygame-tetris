@@ -10,6 +10,8 @@ _print_dim = False
 pygame.mixer.init()
 pygame.mixer.music.load('sound/Tetris_theme.ogg')
 pygame.mixer.music.play(-1,0)
+bg_img = pygame.image.load("image/bgimg.png")
+bg_img = pygame.transform.scale(bg_img,(600,600))
 
 class PygameView(ViewBase):
     """Renders a board in pygame."""
@@ -116,8 +118,9 @@ class PygameView(ViewBase):
 
 
     def draw_board(self):
-        bg_color = self.COLOR_MAP[Color.GRAY]
+        bg_color = self.COLOR_MAP[Color.CLEAR]
         self.surf.fill(self.BORDER_FADE)
+        self.surf.blit(bg_img,(0,0))
 
         X_START = self.BOARD_BORDER_SIZE + (self.padding[1] // 2)
         Y_START = self.BOARD_BORDER_SIZE + (self.padding[0] // 2)
