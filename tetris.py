@@ -256,6 +256,7 @@ class Tetris:
         self.init()
         self.clock = pygame.time.Clock()
         pygame.time.set_timer(self.DROP_EVENT, self.get_level_speed(1))
+        
         while True: #게임 루프
             for event in pygame.event.get():
                 if event.type == QUIT:
