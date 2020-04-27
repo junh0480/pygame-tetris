@@ -42,11 +42,12 @@ class PygameView(ViewBase):
         self.padding = (0, 0)
         self.go_font = fonts["game_over"]
         self.sc_font = fonts["score"]
-        self.font_color = pygame.Color(189, 189, 189)
+        self.go_font_color = pygame.Color(200, 0, 0)
+        self.sc_font_color = pygame.Color(189,189,189)
         self.score = None
         self.level = None
 
-        self.end_msg = self.go_font.render("GAME OVER", True, self.font_color)
+        self.end_msg = self.go_font.render("GAME OVER", True, self.go_font_color)
 
     # Public interface to views
     def set_size(self, cols, rows):
@@ -68,12 +69,12 @@ class PygameView(ViewBase):
     def show_score(self):
         score_height = 0
         if self.score is not None:
-            score_surf = self.sc_font.render("{:06d}".format(self.score), True, self.font_color)
+            score_surf = self.sc_font.render("{:06d}".format(self.score), True, self.sc_font_color)
             self.surf.blit(score_surf, (self.BOARD_BORDER_SIZE, self.BOARD_BORDER_SIZE))
             score_height = score_surf.get_height()
 
         if self.level is not None:
-            level_surf = self.sc_font.render("LEVEL {:02d}".format(self.level), True, self.font_color)
+            level_surf = self.sc_font.render("LEVEL {:02d}".format(self.level), True, self.sc_font_color)
             level_pos = (self.BOARD_BORDER_SIZE, 
                          self.BOARD_BORDER_SIZE + score_height + self.SCORE_PADDING)
             self.surf.blit(level_surf, level_pos)
@@ -189,13 +190,14 @@ class Tetris:
     def init(self):
         pygame.init()
         pygame.font.init()
+        pygame.display.set_caption("21629579 이준희")
         self.surf = pygame.display.set_mode((600, 600)) # 디스플레이 크기 설정
         self.font = None
 
         if pygame.font.get_init():
             self.fonts = {}
-            self.fonts["game_over"] = pygame.font.SysFont(None, 72)
-            self.fonts["score"] = pygame.font.SysFont(None, 36)
+            self.fonts["game_over"] = pygame.font.SysFont("freesansbold.ttf", 72)
+            self.fonts["score"] = pygame.font.SysFont("freesansbold.ttf", 29)
 
         self.view = self.view_type(self.surf, self.fonts)
 
@@ -245,7 +247,7 @@ class Tetris:
         self.view.show()
 
         if self.game_over:
-            self.view.show_game_over() # 게임오버 함수가 있는 듯
+            self.view.show_game_over() 
 
         pygame.display.update()
 
@@ -254,7 +256,7 @@ class Tetris:
         self.clock = pygame.time.Clock()
         pygame.time.set_timer(self.DROP_EVENT, self.get_level_speed(1))
 
-        while True:
+        while True: #게임 루프
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
