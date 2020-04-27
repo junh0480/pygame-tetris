@@ -7,9 +7,8 @@ from pygame.locals import *
 from engine import TextView, ViewBase, Board, Piece, Color
 
 _print_dim = False
-pygame.mixer.init()
-pygame.mixer.music.load('sound/Tetris_theme.ogg')
-pygame.mixer.music.play(-1,0)
+click = False
+
 bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
 
@@ -190,7 +189,8 @@ class Tetris:
     def init(self):
         pygame.init()
         pygame.font.init()
-        pygame.display.set_caption("21629579 이준희")
+        pygame.mixer.init()
+        pygame.display.set_caption("Tetris by LJH")
         self.surf = pygame.display.set_mode((600, 600)) # 디스플레이 크기 설정
         self.font = None
 
@@ -250,20 +250,24 @@ class Tetris:
             self.view.show_game_over() 
 
         pygame.display.update()
-    
 
-    def main(self):
+    def game(self):
+        running = True
         self.init()
         self.clock = pygame.time.Clock()
         pygame.time.set_timer(self.DROP_EVENT, self.get_level_speed(1))
-        
-        while True: #게임 루프
+        pygame.mixer.music.load('sound/Tetris_theme.ogg')
+        pygame.mixer.music.play(-1,0)
+
+        while running: #게임 루프
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
                     self.key_handler(event.key)
+                    if event.key == K_ESCAPE:
+                        running = False
                 elif event.type == self.DROP_EVENT:
                     self.board.drop_piece()
                 elif event.type == self.LEVEL_UP:
@@ -273,10 +277,65 @@ class Tetris:
             if self.board.game_over and not self.game_over:
                 self.game_over = True
                 pygame.time.set_timer(self.DROP_EVENT, 0)
+                pygame.mixer_music.stop()
                 
 
             self.render_frame()
             self.clock.tick(self.max_fps)
+
+
+    def main(self):
+        self.init()
+        self.clock = pygame.time.Clock()
+
+        while True: # 메인 메뉴 루프
+
+            TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
+            MENU_font = pygame.font.Font("freesansbold.ttf", 40)
+            title = TITLE_font.render("TETRIS",True,(255,255,255))
+            title_rect = title.get_rect()
+            title_rect.center = (300,100)
+
+            DISPLAYSURF = pygame.display.set_mode((600,600))
+            DISPLAYSURF.fill((0,0,0))
+
+            mx, my = pygame.mouse.get_pos()
+
+            button_1 = pygame.Rect(200, 200, 200, 50)
+            button_2 = pygame.Rect(200, 300, 200, 50)
+            button_3 = pygame.Rect(200, 400, 200, 50)
+
+            if button_1.collidepoint((mx, my)):
+                if click:
+                    self.game()
+            if button_2.collidepoint((mx, my)):
+                if click:
+                    pass
+            if button_3.collidepoint((mx, my)):
+                if click:
+                    pass
+
+            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_1)
+            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_2)
+            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_3)
+
+            click = False
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+
+            DISPLAYSURF.blit(title,title_rect)
+            pygame.display.update()
+            self.clock.tick(10)
+
 
 
 if __name__ == "__main__":
