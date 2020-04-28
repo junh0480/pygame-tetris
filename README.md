@@ -4,21 +4,25 @@ A simple tetris game
 Controls:
 ---------
 
-Left/Right arrows: Move back and forth
+왼쪽 방향키 - 왼쪽으로 한칸 이동
 
-Up arrow: Rotate piece
+오른쪽 방향키 - 왼쪽으로 한칸 이동
 
-Down arrow: Drop piece one space
+위쪽 방향키 - 블럭이 90도 회전
 
-A/S keys: Rotate piece left/right
+아래쪽 방향키 - 아래쪽으로 한칸 이동
 
-Space bar: Full drop
+A,S 키 - 좌/우로 블럭 90도 회전
+
+스페이스 바 - 블럭 수직 낙하
+
+P 키 - 일시정지
+
+R 키 - 일시정지 해제
 
 추가 예정인 기능 :
 ---------
 
-1. 멈춤기능 추가
-2. 메인화면 추가
 3. 게임오버 되어도 다시 시작 할 수 있게 만들기
 
 작업 일지 :
@@ -40,4 +44,6 @@ Space bar: Full drop
 
 4/27 : git 원격저장소와 로컬저장소 충돌 해결, 메인화면 및 버튼생성
 
-4/28 : 메인화면 배경, 버튼 이미지, start버튼 기능 추가, 사운드오류 해결       
+4/28 : 메인메뉴 윈도우 창 오류 해결, 메인화면 배경, 버튼 이미지, start버튼 기능 추가, 사운드오류 해결
+
+4/29 : 게임화면 배경 변경, EXIT 버튼에 기능 추가, 테트리스 멈춤기능 추가
