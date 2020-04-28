@@ -14,6 +14,10 @@ bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
 start_img = pygame.image.load("image/start_menu.png")
 start_img = pygame.transform.scale(start_img,(200,50))
+score_img = pygame.image.load("image/score_menu.png")
+score_img = pygame.transform.scale(score_img,(200,50))
+exit_img = pygame.image.load("image/exit_menu.png")
+exit_img = pygame.transform.scale(exit_img,(200,50))
 
 class PygameView(ViewBase):
     """Renders a board in pygame."""
@@ -307,8 +311,8 @@ class Tetris:
             mx, my = pygame.mouse.get_pos()
 
             button_1 = start_img.get_rect(centerx = 300, centery= 220)
-            button_2 = pygame.Rect(200, 300, 200, 50)
-            button_3 = pygame.Rect(200, 400, 200, 50)
+            button_2 = score_img.get_rect(centerx = 300, centery= 320)
+            button_3 = exit_img.get_rect(centerx = 300, centery= 420)
 
             if button_1.collidepoint((mx, my)):
                 if click:
@@ -321,8 +325,8 @@ class Tetris:
                     pass
 
             DISPLAYSURF.blit(start_img,button_1)
-            pygame.draw.rect(DISPLAYSURF, (189, 189, 189), button_2)
-            pygame.draw.rect(DISPLAYSURF, (189, 189, 189), button_3)
+            DISPLAYSURF.blit(score_img,button_2)
+            DISPLAYSURF.blit(exit_img,button_3)
 
             click = False
             for event in pygame.event.get():
