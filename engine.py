@@ -4,6 +4,7 @@ from collections import defaultdict # key 값이 없을 경우 미리 지정해 
 from random import Random
 
 pygame.mixer.init()
+
 sound_line = pygame.mixer.Sound('sound/line.wav')
 sound_fall = pygame.mixer.Sound('sound/fall.wav')
 sound_line.set_volume(0.1)
@@ -165,8 +166,7 @@ class Board:
 
 	def clear_tile(self, x, y):
 		self.tiles[(x,y)] = Color.CLEAR
-
-		
+		sound_line.play()
 
 		# Move all the tiles above this row down one space
 		for y_tile in range(y, self.columns[x] - 1, -1):
@@ -180,7 +180,6 @@ class Board:
 	def clear_row(self, row):
 		for col in range(len(self.columns)):
 			self.clear_tile(col, row)
-			sound_line.play()
 
 	def row_full(self, row):
 		for col in range(len(self.columns)):
@@ -208,10 +207,10 @@ class Board:
 		if self.piece is None:
 			return
 		if not self.piece_can_move(0, 1):
+			sound_fall.play()
 			# We want to give a short leeway for the player to move the piece, once it's hit bottom
 			if self.finalize_ready:
 				self.finalize_piece()
-				sound_fall.play()
 				if self.autogen:
 					self.generate_piece()
 			else:
