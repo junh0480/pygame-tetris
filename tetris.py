@@ -12,6 +12,9 @@ click = False
 
 bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
+main_img = pygame.image.load("image/main_img.png")
+main_img = pygame.transform.scale(main_img,(600,600))
+
 start_img = pygame.image.load("image/start_menu.png")
 start_img = pygame.transform.scale(start_img,(200,50))
 score_img = pygame.image.load("image/score_menu.png")
@@ -323,10 +326,12 @@ class Tetris:
             if button_3.collidepoint((mx, my)):
                 if click:
                     pass
-
+            
+            DISPLAYSURF.blit(main_img,(0,0))
             DISPLAYSURF.blit(start_img,button_1)
             DISPLAYSURF.blit(score_img,button_2)
             DISPLAYSURF.blit(exit_img,button_3)
+            
 
             click = False
             for event in pygame.event.get():
