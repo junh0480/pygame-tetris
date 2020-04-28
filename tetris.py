@@ -6,11 +6,14 @@ from pygame.locals import *
 
 from engine import TextView, ViewBase, Board, Piece, Color
 
+
 _print_dim = False
 click = False
 
 bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
+start_img = pygame.image.load("image/start_menu.png")
+start_img = pygame.transform.scale(start_img,(200,50))
 
 class PygameView(ViewBase):
     """Renders a board in pygame."""
@@ -187,7 +190,6 @@ class Tetris:
             self.board.full_drop_piece()
 
     def init(self):
-        pygame.init()
         pygame.font.init()
         pygame.mixer.init()
         pygame.display.set_caption("Tetris by LJH")
@@ -290,21 +292,21 @@ class Tetris:
     def main(self):
         self.init()
         self.clock = pygame.time.Clock()
-        os.environ['SDL_VIDEO_WINDOW_POS'] = '50,500'
         DISPLAYSURF = pygame.display.set_mode([600,600])
         DISPLAYSURF.fill((0,0,0))
 
-        while True: # 메인 메뉴 루프
+        TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
+        MENU_font = pygame.font.Font("freesansbold.ttf", 25)
 
-            TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
-            MENU_font = pygame.font.Font("freesansbold.ttf", 40)
-            title = TITLE_font.render("TETRIS",True,(255,255,255))
-            title_rect = title.get_rect()
-            title_rect.center = (300,100)
+        title = TITLE_font.render("TETRIS",True,(255,255,255))
+        title_rect = title.get_rect()
+        title_rect.center = (300,100)
+
+        while True: # 메인 메뉴 루프
 
             mx, my = pygame.mouse.get_pos()
 
-            button_1 = pygame.Rect(200, 200, 200, 50)
+            button_1 = start_img.get_rect(centerx = 300, centery= 220)
             button_2 = pygame.Rect(200, 300, 200, 50)
             button_3 = pygame.Rect(200, 400, 200, 50)
 
@@ -318,9 +320,9 @@ class Tetris:
                 if click:
                     pass
 
-            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_1)
-            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_2)
-            pygame.draw.rect(DISPLAYSURF, (255, 255, 255), button_3)
+            DISPLAYSURF.blit(start_img,button_1)
+            pygame.draw.rect(DISPLAYSURF, (189, 189, 189), button_2)
+            pygame.draw.rect(DISPLAYSURF, (189, 189, 189), button_3)
 
             click = False
             for event in pygame.event.get():
@@ -336,6 +338,7 @@ class Tetris:
                         click = True
 
             DISPLAYSURF.blit(title,title_rect)
+
             pygame.display.update()
             self.clock.tick(10)
 
