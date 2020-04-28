@@ -264,9 +264,12 @@ class Tetris:
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
+                    pygame.mixer_music.stop()
+
                 elif event.type == KEYDOWN:
                     self.key_handler(event.key)
                     if event.key == K_ESCAPE:
+                        pygame.mixer_music.stop()
                         running = False
                 elif event.type == self.DROP_EVENT:
                     self.board.drop_piece()
@@ -287,6 +290,9 @@ class Tetris:
     def main(self):
         self.init()
         self.clock = pygame.time.Clock()
+        os.environ['SDL_VIDEO_WINDOW_POS'] = '50,500'
+        DISPLAYSURF = pygame.display.set_mode([600,600])
+        DISPLAYSURF.fill((0,0,0))
 
         while True: # 메인 메뉴 루프
 
@@ -295,9 +301,6 @@ class Tetris:
             title = TITLE_font.render("TETRIS",True,(255,255,255))
             title_rect = title.get_rect()
             title_rect.center = (300,100)
-
-            DISPLAYSURF = pygame.display.set_mode((600,600))
-            DISPLAYSURF.fill((0,0,0))
 
             mx, my = pygame.mouse.get_pos()
 
@@ -328,7 +331,7 @@ class Tetris:
                     if event.key == K_ESCAPE:
                         pygame.quit()
                         sys.exit()
-                if event.type == MOUSEBUTTONDOWN:
+                elif event.type == MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
 
