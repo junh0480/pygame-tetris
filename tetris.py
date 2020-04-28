@@ -260,15 +260,87 @@ class Tetris:
 
         pygame.display.update()
 
+    def score_board(self):
+        self.init()
+        self.clock = pygame.time.Clock()
+        DISPLAYSURF = pygame.display.set_mode([600,600])
+        DISPLAYSURF.fill((0,0,0))
+
+        SCORE_font = pygame.font.Font("freesansbold.ttf", 35)
+        title = SCORE_font.render("SCORE",True,(189,189,189))
+        title_rect = title.get_rect()
+        title_rect.center = (300,100)
+
+        TEXT_font = pygame.font.Font("freesansbold.ttf", 18)
+
+        f = open("score.txt", "r+t",encoding="utf8")
+        for i, line in enumerate(f): 
+            if i > 11:
+                pass
+
+        text = TEXT_font.render(f.read(),True,(189,189,189))
+        text_rect = text.get_rect()
+        text_rect.center = (300,150)
+
+        while True: #이벤트 루프
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == KEYDOWN:
+                    self.key_handler(event.key)
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            
+            DISPLAYSURF.blit(title,title_rect)
+            DISPLAYSURF.blit(text,text_rect)
+            pygame.display.update()
+
+            f.close()
+            self.clock.tick(self.max_fps)
+
+    def paused(self):
+        running_pasued = True
+        self.init()
+        self.clock = pygame.time.Clock()
+        PAUSED_SURFACE = pygame.display.set_mode([600,600])
+        PAUSED_SURFACE.fill((0,0,0))
+        TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
+        title = TITLE_font.render("Paused",True,(255,255,255))
+        title_rect = title.get_rect()
+        title_rect.center = (300,300)
+
+        while running_pasued: #이벤트 루프
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == KEYDOWN:
+                    self.key_handler(event.key)
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                        running_pasued = False
+                    elif event.key == K_r:
+                        running_pasued = False
+                        self.game()
+
+            
+            PAUSED_SURFACE.blit(title,title_rect)
+            pygame.display.update()
+            self.clock.tick(self.max_fps)
+
+
     def game(self):
-        running = True
+        running_game = True
         self.init()
         self.clock = pygame.time.Clock()
         pygame.time.set_timer(self.DROP_EVENT, self.get_level_speed(1))
         pygame.mixer.music.load('sound/Tetris_theme.ogg')
-        pygame.mixer.music.play(-1,0)
+        pygame.mixer.music.play(-1,0.0)
 
-        while running: #게임 루프
+        while running_game: #게임 루프
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -279,7 +351,15 @@ class Tetris:
                     self.key_handler(event.key)
                     if event.key == K_ESCAPE:
                         pygame.mixer_music.stop()
-                        running = False
+                        pygame.quit()
+                        sys.exit()
+                        running_game = False
+
+                    elif event.key == K_p:
+                        pygame.mixer_music.stop()
+                        running_game = False
+                        self.paused()
+
                 elif event.type == self.DROP_EVENT:
                     self.board.drop_piece()
                 elif event.type == self.LEVEL_UP:
@@ -303,8 +383,6 @@ class Tetris:
         DISPLAYSURF.fill((0,0,0))
 
         TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
-        MENU_font = pygame.font.Font("freesansbold.ttf", 25)
-
         title = TITLE_font.render("TETRIS",True,(255,255,255))
         title_rect = title.get_rect()
         title_rect.center = (300,100)
@@ -322,10 +400,11 @@ class Tetris:
                     self.game()
             if button_2.collidepoint((mx, my)):
                 if click:
-                    pass
+                    self.score_board()
             if button_3.collidepoint((mx, my)):
                 if click:
-                    pass
+                    pygame.quit()
+                    sys.exit()
             
             DISPLAYSURF.blit(main_img,(0,0))
             DISPLAYSURF.blit(start_img,button_1)
