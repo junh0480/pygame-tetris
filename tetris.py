@@ -315,7 +315,12 @@ class Tetris:
         TITLE_font = pygame.font.Font("freesansbold.ttf", 70)
         title = TITLE_font.render("Paused",True,(255,255,255))
         title_rect = title.get_rect()
-        title_rect.center = (300,300)
+        title_rect.center = (300,200)
+
+        TEXT_font = pygame.font.Font("freesansbold.ttf", 40)
+        text = TEXT_font.render("Press 'Q' To Continue",True,(255,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = (300,300)
 
         while running_pasued: #이벤트 루프
             for event in pygame.event.get():
@@ -328,19 +333,19 @@ class Tetris:
                         pygame.quit()
                         sys.exit()
                         running_pasued = False
-                    elif event.key == K_r:
+                    elif event.key == K_q:
                         running_pasued = False
                         self.game()
 
             
             PAUSED_SURFACE.blit(title,title_rect)
+            PAUSED_SURFACE.blit(text,text_rect)
             pygame.display.update()
             self.clock.tick(self.max_fps)
 
 
     def game(self):
         global HIGHSCORE
-        print("시작")
         running_game = True
         self.init()
         self.clock = pygame.time.Clock()
@@ -359,8 +364,6 @@ class Tetris:
                     self.key_handler(event.key)
                     if event.key == K_ESCAPE:
                         pygame.mixer_music.stop()
-                        pygame.quit()
-                        sys.exit()
                         running_game = False
 
                     elif event.key == K_p:
@@ -368,9 +371,11 @@ class Tetris:
                         running_game = False
                         self.paused()
                     
-                    elif event.key == K_m:
+                    elif event.key == K_r:
                         self.board.reset()
-                        self.main()
+                        self.game_over = False
+                        t = Tetris(PygameView)
+                        t.main()
 
                 elif event.type == self.DROP_EVENT:
                     self.board.drop_piece()
@@ -388,6 +393,7 @@ class Tetris:
                     score_file.write("{:06d}".format(self.view.score))
                     HIGHSCORE = "{:06d}".format(self.view.score)
                     score_file.close()
+                
 
                 
             self.render_frame()
