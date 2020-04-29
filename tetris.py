@@ -1,14 +1,17 @@
 import sys
 import os
+import time
 
 import pygame
 from pygame.locals import *
 
 from engine import TextView, ViewBase, Board, Piece, Color
 
-
-_print_dim = False
+file = open("score.txt","r")
+HIGHSCORE = file.read()
+file.close()
 click = False
+_print_dim = False
 
 bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
@@ -53,7 +56,7 @@ class PygameView(ViewBase):
         self.sc_font = fonts["score"]
         self.go_font_color = pygame.Color(200, 0, 0)
         self.sc_font_color = pygame.Color(189,189,189)
-        self.score = None
+        self.score = 0
         self.level = None
 
         self.end_msg = self.go_font.render("GAME OVER", True, self.go_font_color)
@@ -91,7 +94,7 @@ class PygameView(ViewBase):
     def show_game_over(self):
         r = self.end_msg.get_rect()
         self.surf.blit(self.end_msg, (300 - r.width // 2, 300 - r.height // 2))
-
+    
     # Helper methods
 
     def get_score_size(self):
@@ -257,32 +260,35 @@ class Tetris:
 
         if self.game_over:
             self.view.show_game_over() 
-
+        
         pygame.display.update()
 
+
     def score_board(self):
+        running_board = True
+        global HIGHSCORE
         self.init()
         self.clock = pygame.time.Clock()
         DISPLAYSURF = pygame.display.set_mode([600,600])
         DISPLAYSURF.fill((0,0,0))
 
         SCORE_font = pygame.font.Font("freesansbold.ttf", 35)
-        title = SCORE_font.render("SCORE",True,(189,189,189))
+        title = SCORE_font.render("HIGH SCORE",True,(189,189,189))
         title_rect = title.get_rect()
         title_rect.center = (300,100)
 
-        TEXT_font = pygame.font.Font("freesansbold.ttf", 18)
-
-        f = open("score.txt", "r+t",encoding="utf8")
-        for i, line in enumerate(f): 
-            if i > 11:
-                pass
-
-        text = TEXT_font.render(f.read(),True,(189,189,189))
+        TEXT_font = pygame.font.Font("freesansbold.ttf", 35)
+        text = TEXT_font.render(HIGHSCORE,True,(189,189,189))
         text_rect = text.get_rect()
-        text_rect.center = (300,150)
+        text_rect.center = (300,170)
 
-        while True: #이벤트 루프
+        EXIT_font = pygame.font.Font("freesansbold.ttf", 30)
+        text2 = TEXT_font.render("Press 'ESC' To Go Back",True,(255,0,0))
+        text2_rect = text2.get_rect()
+        text2_rect.center = (300,300)
+
+
+        while running_board: #이벤트 루프
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -290,14 +296,14 @@ class Tetris:
                 elif event.type == KEYDOWN:
                     self.key_handler(event.key)
                     if event.key == K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                        running_board = False
             
+            DISPLAYSURF.blit(main_img,(0,0))
             DISPLAYSURF.blit(title,title_rect)
             DISPLAYSURF.blit(text,text_rect)
+            DISPLAYSURF.blit(text2,text2_rect)
             pygame.display.update()
-
-            f.close()
+            
             self.clock.tick(self.max_fps)
 
     def paused(self):
@@ -333,6 +339,8 @@ class Tetris:
 
 
     def game(self):
+        global HIGHSCORE
+        print("시작")
         running_game = True
         self.init()
         self.clock = pygame.time.Clock()
@@ -359,6 +367,10 @@ class Tetris:
                         pygame.mixer_music.stop()
                         running_game = False
                         self.paused()
+                    
+                    elif event.key == K_m:
+                        self.board.reset()
+                        self.main()
 
                 elif event.type == self.DROP_EVENT:
                     self.board.drop_piece()
@@ -368,15 +380,22 @@ class Tetris:
 
             if self.board.game_over and not self.game_over:
                 self.game_over = True
+                print("게임오버")
                 pygame.time.set_timer(self.DROP_EVENT, 0)
                 pygame.mixer_music.stop()
-                
+                if self.view.score > int(HIGHSCORE):
+                    score_file = open("score.txt","w+",encoding="utf8")
+                    score_file.write("{:06d}".format(self.view.score))
+                    HIGHSCORE = "{:06d}".format(self.view.score)
+                    score_file.close()
 
+                
             self.render_frame()
             self.clock.tick(self.max_fps)
 
 
     def main(self):
+        global click
         self.init()
         self.clock = pygame.time.Clock()
         DISPLAYSURF = pygame.display.set_mode([600,600])
@@ -386,6 +405,7 @@ class Tetris:
         title = TITLE_font.render("TETRIS",True,(255,255,255))
         title_rect = title.get_rect()
         title_rect.center = (300,100)
+        
 
         while True: # 메인 메뉴 루프
 
@@ -411,7 +431,6 @@ class Tetris:
             DISPLAYSURF.blit(score_img,button_2)
             DISPLAYSURF.blit(exit_img,button_3)
             
-
             click = False
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -424,7 +443,7 @@ class Tetris:
                 elif event.type == MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
-
+            
             DISPLAYSURF.blit(title,title_rect)
 
             pygame.display.update()
