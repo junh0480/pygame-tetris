@@ -13,6 +13,7 @@ file.close()
 click = False
 _print_dim = False
 
+
 bg_img = pygame.image.load("image/bgimg.png")
 bg_img = pygame.transform.scale(bg_img,(600,600))
 main_img = pygame.image.load("image/main_img.png")
@@ -385,7 +386,6 @@ class Tetris:
 
             if self.board.game_over and not self.game_over:
                 self.game_over = True
-                print("게임오버")
                 pygame.time.set_timer(self.DROP_EVENT, 0)
                 pygame.mixer_music.stop()
                 if self.view.score > int(HIGHSCORE):
